@@ -1,5 +1,6 @@
 import pygame
 import sys
+from rules_implementation import make_move
 
 # Initialize Pygame
 pygame.init()
@@ -59,18 +60,21 @@ def get_cell_index(pos):
     x, y = pos
     row = board_size - 1 - (y // cell_size)  # Adjust for Go's coordinate system
     col = x // cell_size
-    print(row, col)
     return row * board_size + col
 
 def handle_click(board, index, click):
-    board_list = list(board)
-    if board_list[index] == ' ':
-        # 1 means left click i.e. white('o'), 3 is right click i.e. black
-        color = 'o' if click == 1 else 'x'
-        board_list[index] = color
+    if board[index] == ' ':
+        # 1 means left click i.e. white('o'), 3 is right click i.e. black('x')
+        piece = 'o' if click == 1 else 'x'
+        try:
+            board = make_move(board, index, piece)
+        except ValueError as v:
+            print(str(v))
     else:
+        board_list = list(board)
         board_list[index] = ' '  # Remove the piece if clicked again
-    return ''.join(board_list)
+        board = ''.join(board_list)
+    return board
 
 def main():
     board = ' ' * 81  # Initialize empty board
