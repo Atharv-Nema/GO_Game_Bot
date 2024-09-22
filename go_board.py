@@ -1,12 +1,13 @@
 import pygame
 import sys
-from rules_implementation import make_move
+from rules_implementation import Board, MoveManager
 
 # Initialize Pygame
 pygame.init()
 
 # Set up display
 board_size = 9
+MOVE_MANAGER = MoveManager(board_size)
 cell_size = 60
 width = board_size * cell_size
 height = board_size * cell_size
@@ -24,7 +25,12 @@ PIECE_RADIUS = cell_size // 2 - 5
 # Fonts
 font = pygame.font.Font(None, 36)
 
-def draw_board(board):
+def draw_board(board: Board):
+    """
+    Takes in the board and draws it
+    Parameters:
+    board (Board): The board
+    """
     screen.fill(BACKGROUND_COLOR)
 
     # Draw grid lines
@@ -35,7 +41,8 @@ def draw_board(board):
                          (width - cell_size // 2, i * cell_size + cell_size // 2), 2)
 
     # Draw pieces
-    for i, cell in enumerate(board):
+    for i in range(board_size * board_size):
+        cell = board[i]
         row, col = divmod(i, board_size)
         x = col * cell_size + cell_size // 2
         y = (board_size - 1 - row) * cell_size + cell_size // 2  # Adjusted for Go's coordinate system
@@ -56,28 +63,48 @@ def draw_board(board):
         text_surface = font.render(chr(ord('A') + i), True, RED)
         screen.blit(text_surface, (i * cell_size + cell_size // 2 - text_surface.get_width() // 2, 0))
 
-def get_cell_index(pos):
+def get_cell_index(pos: tuple[float, float]) -> int:
+    """
+    Takes in the position of the mouse and calculates the board's 1D index
+    Parameters:
+    pos (tuple[float, float]): The 2D pygame coordinates of the mouse pointer
+    Returns:
+    The 1D board index
+    """
     x, y = pos
     row = board_size - 1 - (y // cell_size)  # Adjust for Go's coordinate system
     col = x // cell_size
     return row * board_size + col
 
-def handle_click(board, index, click):
-    if board[index] == ' ':
+def handle_click(board: Board, index: int, button: int) -> Board:
+    """
+    Handles the event of clicking the go board. A click on an already existing
+    piece indicates removal. A left click indicates adding a white piece while
+    a left click indicates adding a black piece.
+
+    Parameters:
+    board (Board): The internal representation of the go board
+    index (int): The 1D index of the position where the click occured
+    button (int): Represents which button was clicked
+
+    Returns:
+    The modified board object
+    """
+    if board[index] == '-':
         # 1 means left click i.e. white('o'), 3 is right click i.e. black('x')
-        piece = 'o' if click == 1 else 'x'
+        piece = 'o' if button == 1 else 'x'
         try:
-            board = make_move(board, index, piece)
+            board = MOVE_MANAGER.make_move(board, index, piece)
         except ValueError as v:
             print(str(v))
     else:
-        board_list = list(board)
-        board_list[index] = ' '  # Remove the piece if clicked again
-        board = ''.join(board_list)
+        board_list = list(board.board_str)
+        board_list[index] = '-'  # Remove the piece if clicked again
+        board = MOVE_MANAGER.create_board(''.join(board_list))
     return board
 
 def main():
-    board = ' ' * 81  # Initialize empty board
+    board = MOVE_MANAGER.create_board('-' * 81)  # Initialize empty board
     
     running = True
     while running:

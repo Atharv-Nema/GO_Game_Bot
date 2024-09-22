@@ -1,4 +1,2 @@
-1. Fix the label issue in the UI
-2. Add documentation for the methods
-3. Better exceptions
-4. Change ' ' to '-'
+Fix the label issue in the UI
+Better exceptions
