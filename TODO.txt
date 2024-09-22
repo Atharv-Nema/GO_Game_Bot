@@ -1,2 +1,3 @@
+Add extra data the bot may need
 Fix the label issue in the UI
 Better exceptions

@@ -21,9 +21,28 @@ RED = (255, 0, 0)
 LINE_COLOR = (0, 0, 0)
 BACKGROUND_COLOR = (210, 180, 140)
 PIECE_RADIUS = cell_size // 2 - 5
+TERRITORY_ALPHA = 128  # Semi-transparent alpha for territory
 
 # Fonts
 font = pygame.font.Font(None, 36)
+
+def draw_territory(board: Board):
+    """
+    Takes in the board and draws the territories
+    """
+    territory_surface = pygame.Surface((width, height), pygame.SRCALPHA)  # Create a transparent surface
+    for i in range(board_size * board_size):
+        row, col = divmod(i, board_size)
+        x = col * cell_size + cell_size // 2
+        y = (board_size - 1 - row) * cell_size + cell_size // 2  # Adjust for Go's coordinate system
+
+        if board.territory_str[i] == 'x':  # Black territory
+            pygame.draw.circle(territory_surface, (0, 0, 0, TERRITORY_ALPHA), (x, y), PIECE_RADIUS)
+        elif board.territory_str[i] == 'o':  # White territory
+            pygame.draw.circle(territory_surface, (255, 255, 255, TERRITORY_ALPHA), (x, y), PIECE_RADIUS)
+
+    # Blit the territory surface onto the screen
+    screen.blit(territory_surface, (0, 0))
 
 def draw_board(board: Board):
     """
@@ -105,10 +124,13 @@ def handle_click(board: Board, index: int, button: int) -> Board:
 
 def main():
     board = MOVE_MANAGER.create_board('-' * 81)  # Initialize empty board
-    
+    display_territory = False  # Toggle flag for showing territory
+
     running = True
     while running:
         draw_board(board)
+        if display_territory:
+            draw_territory(board)
         pygame.display.flip()
 
         for event in pygame.event.get():
@@ -121,6 +143,10 @@ def main():
                 pos = pygame.mouse.get_pos()
                 index = get_cell_index(pos)
                 board = handle_click(board, index, event.button)
+            
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:  # Toggle territory view with spacebar
+                    display_territory = not display_territory
                 
 
 if __name__ == "__main__":

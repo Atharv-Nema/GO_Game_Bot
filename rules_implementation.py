@@ -2,13 +2,16 @@ from typing import Union
 
 class Board:
     """The internal representation of the board"""
-    def __init__(self, board_str: str):
+    def __init__(self, board_str: str, territory_str: str):
         """
         Parameters:
         board_str (str): The string that represents the position of pieces
         on the board
+        territory_str (str): The string that represents the current territory 
+        situation of the board
         """
         self.board_str = board_str
+        self.territory_str = territory_str
 
     def __getitem__(self, key: int):
         """Returns the piece at index key"""
@@ -21,9 +24,35 @@ class MoveManager:
         self.BOARD_SIZE = board_size
         self.GRAPH = self.generate_graph() # Neighbours graph
 
+    def create_territory(self, board_str: str) -> str:
+        """Creates the territory string from its board string"""
+        N = self.BOARD_SIZE
+        white_territory_list = [False for i in range(N * N)]
+        black_territory_list = [False for i in range(N * N)]
+        def spread_color(color_territory_list, node):
+            color_territory_list[node] = True
+            for neighbour in self.GRAPH[node]:
+                if board_str[neighbour] == '-' and (not color_territory_list[neighbour]):
+                    spread_color(color_territory_list, neighbour)
+        for node in range(N*N):
+            if board_str[node] == 'o':
+                spread_color(white_territory_list, node)
+            if board_str[node] == 'x':
+                spread_color(black_territory_list, node)
+        final_territory_list = []
+        for i in range(N * N):
+            if not (black_territory_list[i] ^ white_territory_list[i]):
+                final_territory_list.append('-')
+            elif black_territory_list[i] and not white_territory_list[i]:
+                final_territory_list.append('x')
+            elif white_territory_list[i] and not black_territory_list[i]:
+                final_territory_list.append('o')
+        return ''.join(final_territory_list)
+
+            
     def create_board(self, board_str: str) -> Board:
         """Takes in the board_str and creates the board"""
-        return Board(board_str)
+        return Board(board_str, self.create_territory(board_str))
 
     def convert_to_1d(self, position: tuple[int, int]) -> int:
         """
