@@ -1,22 +1,5 @@
 from typing import Union
 
-class Board:
-    """The internal representation of the board"""
-    def __init__(self, board_str: str, territory_str: str):
-        """
-        Parameters:
-        board_str (str): The string that represents the position of pieces
-        on the board
-        territory_str (str): The string that represents the current territory 
-        situation of the board
-        """
-        self.board_str = board_str
-        self.territory_str = territory_str
-
-    def __getitem__(self, key: int):
-        """Returns the piece at index key"""
-        return self.board_str[key]
-
 
 class MoveManager:
     """Class that manages moves"""
@@ -24,20 +7,26 @@ class MoveManager:
         self.BOARD_SIZE = board_size
         self.GRAPH = self.generate_graph() # Neighbours graph
 
-    def create_territory(self, board_str: str) -> str:
-        """Creates the territory string from its board string"""
+    def create_territory(self, board: str) -> str:
+        """
+        Creates the territory string from the board
+        Parameters:
+        board (str): Represents the position of pieces on the board
+        Returns:
+        The corresponding territory_str
+        """
         N = self.BOARD_SIZE
         white_territory_list = [False for i in range(N * N)]
         black_territory_list = [False for i in range(N * N)]
         def spread_color(color_territory_list, node):
             color_territory_list[node] = True
             for neighbour in self.GRAPH[node]:
-                if board_str[neighbour] == '-' and (not color_territory_list[neighbour]):
+                if board[neighbour] == '-' and (not color_territory_list[neighbour]):
                     spread_color(color_territory_list, neighbour)
         for node in range(N*N):
-            if board_str[node] == 'o':
+            if board[node] == 'o':
                 spread_color(white_territory_list, node)
-            if board_str[node] == 'x':
+            if board[node] == 'x':
                 spread_color(black_territory_list, node)
         final_territory_list = []
         for i in range(N * N):
@@ -48,11 +37,6 @@ class MoveManager:
             elif white_territory_list[i] and not black_territory_list[i]:
                 final_territory_list.append('o')
         return ''.join(final_territory_list)
-
-            
-    def create_board(self, board_str: str) -> Board:
-        """Takes in the board_str and creates the board"""
-        return Board(board_str, self.create_territory(board_str))
 
     def convert_to_1d(self, position: tuple[int, int]) -> int:
         """
@@ -95,7 +79,7 @@ class MoveManager:
             graph.append(neighbours)
         return graph
 
-    def get_liberty_count(self, board: Union[str, Board], index: int) -> int:
+    def get_liberty_count(self, board: str, index: int) -> int:
         """
         Returns the total count of the liberties of the block containing index
         Parameters:
@@ -123,18 +107,18 @@ class MoveManager:
                     visited.add(neighbour)
         return liberty_count
 
-    def remove_block(self, board_str: str, index: int) -> str:
+    def remove_block(self, board: str, index: int) -> str:
         """
         Removes the block containing the index
         Parameters:
-        board_str (str): The string that represents the pieces on the board
+        board (str): The string that represents the pieces on the board
         index (int): The 1D index
         Returns:
-        The new board string
+        The new board
         """
-        board_list = list(board_str)
+        board_list = list(board)
         initial_colour = board_list[index]
-        if board_str[index] == '-':
+        if board[index] == '-':
             raise ValueError('No block contains an empty cell')
         stack = [index]
         board_list[index] = '-'
@@ -149,11 +133,11 @@ class MoveManager:
         return ''.join(board_list)
                 
 
-    def make_move(self, board: Board, index: int, piece: str) -> Board:
+    def make_move(self, board: str, index: int, piece: str) -> str:
         """
         Returns the board after the move has been made
         Parameters:
-        board (Board): The go board
+        board (str): The go board
         index (int): The 1d index where a piece is to be placed
         piece(str): The piece to be placed
         Returns:
@@ -162,7 +146,7 @@ class MoveManager:
         if board[index] != '-':
             raise ValueError("Cannot place a piece on a non empty cell")
         # Make the move
-        board_list = list(board.board_str)
+        board_list = list(board)
         board_list[index] = piece
         new_board = ''.join(board_list)
 
@@ -177,5 +161,5 @@ class MoveManager:
         # If still no liberties exist for the current piece raise exception
         if self.get_liberty_count(new_board, index) == 0:
             raise ValueError("Cannot perform suicide")
-        return self.create_board(new_board)
+        return new_board
     

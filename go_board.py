@@ -1,6 +1,6 @@
 import pygame
 import sys
-from rules_implementation import Board, MoveManager
+from rules_implementation import MoveManager
 
 # Initialize Pygame
 pygame.init()
@@ -26,7 +26,7 @@ TERRITORY_ALPHA = 128  # Semi-transparent alpha for territory
 # Fonts
 font = pygame.font.Font(None, 36)
 
-def draw_territory(board: Board):
+def draw_territory(board: str):
     """
     Takes in the board and draws the territories
     """
@@ -35,16 +35,16 @@ def draw_territory(board: Board):
         row, col = divmod(i, board_size)
         x = col * cell_size + cell_size // 2
         y = (board_size - 1 - row) * cell_size + cell_size // 2  # Adjust for Go's coordinate system
-
-        if board.territory_str[i] == 'x':  # Black territory
+        territory_str = MOVE_MANAGER.create_territory(board)
+        if territory_str[i] == 'x':  # Black territory
             pygame.draw.circle(territory_surface, (0, 0, 0, TERRITORY_ALPHA), (x, y), PIECE_RADIUS)
-        elif board.territory_str[i] == 'o':  # White territory
+        elif territory_str[i] == 'o':  # White territory
             pygame.draw.circle(territory_surface, (255, 255, 255, TERRITORY_ALPHA), (x, y), PIECE_RADIUS)
 
     # Blit the territory surface onto the screen
     screen.blit(territory_surface, (0, 0))
 
-def draw_board(board: Board):
+def draw_board(board: str):
     """
     Takes in the board and draws it
     Parameters:
@@ -95,7 +95,7 @@ def get_cell_index(pos: tuple[float, float]) -> int:
     col = x // cell_size
     return row * board_size + col
 
-def handle_click(board: Board, index: int, button: int) -> Board:
+def handle_click(board: str, index: int, button: int) -> str:
     """
     Handles the event of clicking the go board. A click on an already existing
     piece indicates removal. A left click indicates adding a white piece while
@@ -117,13 +117,13 @@ def handle_click(board: Board, index: int, button: int) -> Board:
         except ValueError as v:
             print(str(v))
     else:
-        board_list = list(board.board_str)
+        board_list = list(board)
         board_list[index] = '-'  # Remove the piece if clicked again
-        board = MOVE_MANAGER.create_board(''.join(board_list))
+        board = ''.join(board_list)
     return board
 
 def main():
-    board = MOVE_MANAGER.create_board('-' * 81)  # Initialize empty board
+    board = '-' * 81  # Initialize empty board
     display_territory = False  # Toggle flag for showing territory
 
     running = True

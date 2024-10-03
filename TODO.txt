@@ -1,3 +1,6 @@
 Add extra data the bot may need
+Improve the Readme
 Fix the label issue in the UI
 Better exceptions
+
+Turn based rules will be implemented in a different class(probably something called gamerunner)
