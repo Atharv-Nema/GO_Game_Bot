@@ -7,6 +7,9 @@ class MinimaxBot(Bot):
         self.move_manager: MoveManager = move_manager
         self.my_piece = my_piece
 
+    def receive_result(self, result: str):
+        pass
+
     def board_eval(self, board: str, my_piece: str, other_pass: bool):
         # For now, I will just use the territories count
         territory_str = self.move_manager.create_territory(board)

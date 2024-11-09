@@ -9,3 +9,7 @@ class Bot(ABC):
     @abstractmethod
     def make_move(self, board: str, other_pass: bool) -> int:
         '''Make the move given the board'''
+
+    @abstractmethod
+    def receive_result(self, result: str):
+        '''Receives the result of the game'''

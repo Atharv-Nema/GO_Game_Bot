@@ -13,6 +13,11 @@ class HumanBot(Bot):
         self.previous_states: set = set()
         self.drawing_obj = VisualInterface(move_manager)
         
+    def receive_result(self, result: str):
+        self.drawing_obj.display_result(result)
+        pygame.display.flip()
+        time.sleep(2)
+    
     def make_move(self, board: str, other_pass: bool) -> int:
         self.previous_states.add(board)
         running = True
@@ -51,28 +56,7 @@ class HumanBot(Bot):
                     
                     if event.key == pygame.K_p:
                         # This indicates an intention to pass
-                        if other_pass:
-                            # The game is over, I can now calculate the state and display the correct message
-                            #TODO: Complete this
-                            territory_str = self.move_manager.create_territory(board)
-                            ct = 0
-                            for i in territory_str:
-                                if i == '-':
-                                    ct += 0
-                                elif i == self.my_piece:
-                                    ct += 1
-                                else:
-                                    ct -= 1
-                            if ct > 0:
-                                self.drawing_obj.display_result("You won")
-                            elif ct < 0:
-                                self.drawing_obj.display_result("Bot won")
-                            else:
-                                self.drawing_obj.display_result("Draw")
-                            
-                        else:
-                            self.drawing_obj.draw_pass_indicator()
+                        self.drawing_obj.draw_pass_indicator()
                         pygame.display.flip()
-                        time.sleep(2)
                         return -1
 

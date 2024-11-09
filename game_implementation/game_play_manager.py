@@ -29,10 +29,16 @@ class GameRunner:
                         elif i == 'o':
                             ct -= 1
                     if ct == 0:
+                        self.bot_x.receive_result("Draw")
+                        self.bot_o.receive_result("Draw")
                         return '-'
                     elif ct > 0:
+                        self.bot_x.receive_result("You won")
+                        self.bot_o.receive_result("You lost")
                         return 'x'
                     else:
+                        self.bot_x.receive_result("You lost")
+                        self.bot_o.receive_result("You won")
                         return 'o'
                     
                 else:
