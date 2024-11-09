@@ -1,6 +1,9 @@
+Move some of the display functions out of go_board for use in playing against the bot
+Add a passing mechanism
+
 Add extra data the bot may need
 Improve the Readme
 Fix the label issue in the UI
 Better exceptions
 
-Turn based rules will be implemented in a different class(probably something called gamerunner)
+First goal is to implement a simple alpha - beta pruning minimax algo

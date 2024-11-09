@@ -7,6 +7,10 @@ class MoveManager:
         self.BOARD_SIZE = board_size
         self.GRAPH = self.generate_graph() # Neighbours graph
 
+    def get_empty_board(self) -> str:
+        '''Returns an empty board of the appropriate size'''
+        return '-' * self.BOARD_SIZE * self.BOARD_SIZE
+    
     def create_territory(self, board: str) -> str:
         """
         Creates the territory string from the board
@@ -130,8 +134,7 @@ class MoveManager:
                 if board_list[neighbour] == initial_colour:
                     board_list[neighbour] = '-'
                     stack.append(neighbour)
-        return ''.join(board_list)
-                
+        return ''.join(board_list)   
 
     def make_move(self, board: str, index: int, piece: str) -> str:
         """
@@ -149,7 +152,6 @@ class MoveManager:
         board_list = list(board)
         board_list[index] = piece
         new_board = ''.join(board_list)
-
         
         neighbours = self.GRAPH[index]
         # Remove any blocks of opponent with zero liberties
@@ -163,3 +165,31 @@ class MoveManager:
             raise ValueError("Cannot perform suicide")
         return new_board
     
+    def is_valid_move(self, board: str, index: int, piece: str) -> bool:
+        if board[index] != '-':
+            return False # Cannot place a piece on a non empty cell
+        
+        # Make the move
+        board_list = list(board)
+        board_list[index] = piece
+        new_board = ''.join(board_list)
+        
+        neighbours = self.GRAPH[index]
+        # Remove any blocks of opponent with zero liberties
+        for neighbour in neighbours:
+            if new_board[neighbour] != '-' and new_board[neighbour] != piece:
+                if self.get_liberty_count(new_board, neighbour) == 0:
+                    return True # As the other block will be removed
+        
+        if self.get_liberty_count(new_board, index) == 0:
+            return False #Cannot perform suicide"
+        return True
+
+    def get_next_moves(self, board: str, piece: str) -> list[int]:
+        # There should be an O(N * N) approach to do this, but for now, I will just do this the naive way
+        N = self.BOARD_SIZE
+        valid_moves = []
+        for move_id in range(N * N):
+            if self.is_valid_move(board, move_id, piece):
+                valid_moves.append(move_id)
+        return valid_moves
