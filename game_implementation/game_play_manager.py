@@ -3,7 +3,13 @@ from game_implementation.rules_implementation import MoveManager
 class GameRunner:
     '''A class that simulates a go game between two bots'''
     def __init__(self, bot_x: type[Bot], bot_o: Bot, move_manager: MoveManager):
-        '''Initializes the game runner'''
+        '''
+        Initializes the game runner
+        Parameters:
+        bot_x (type[Bot]): The class of the bot playing 'x'
+        bot_o (type[Bot]): The class of the bot playing 'o'
+        move_manager (MoveManager): The move manager object
+        '''
         self.bot_x: Bot = bot_x(move_manager, 'x')
         self.bot_o: Bot = bot_o(move_manager, 'o')
         self.piece_to_move: str = 'x'
@@ -11,7 +17,13 @@ class GameRunner:
         self.board = move_manager.get_empty_board()
 
     def start_game(self) -> str:
-        '''Returns the piece that won the game'''
+        '''
+        Simulates and returns the result of the game between two bots
+        Returns:
+        'x' if bot_x won
+        'o' if bot_o won
+        '-' if draw
+        '''
         has_passed = False
         states_achieved = set() # For detecting ko's
         while(True):

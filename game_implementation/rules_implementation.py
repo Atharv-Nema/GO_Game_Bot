@@ -8,7 +8,11 @@ class MoveManager:
         self.GRAPH = self.generate_graph() # Neighbours graph
 
     def get_empty_board(self) -> str:
-        '''Returns an empty board of the appropriate size'''
+        '''
+        Returns an empty board of the appropriate size
+        Returns:
+        The empty board
+        '''
         return '-' * self.BOARD_SIZE * self.BOARD_SIZE
     
     def create_territory(self, board: str) -> str:
@@ -47,6 +51,8 @@ class MoveManager:
         Takes in a 2D zero indexed coordinate and converts it into a 1D coordinate
         Parameters:
         position (tuple[int, int]): Of form (x, y)
+        Returns:
+        x + y * self.BOARD_SIZE (the 1D coordinate)
         """
         x,y = position
         return x + y * self.BOARD_SIZE
@@ -56,6 +62,8 @@ class MoveManager:
         Takes in a 1D zero indexed coordinate and converts it into a 2D coordinate
         Parameters:
         index (int): The 1d index
+        Returns:
+        The 2D coordinate
         """
         y, x = divmod(index, self.BOARD_SIZE)
         return (x, y)
@@ -90,7 +98,7 @@ class MoveManager:
         board (Union[Board, str]): The go board or the board string
         index (int): The 1D index
         Returns:
-        The total number of liberties
+        The total number of liberties of the block
         """
         if board[index] == '-':
             raise ValueError('The liberties of an empty cell is not defined')
@@ -166,6 +174,15 @@ class MoveManager:
         return new_board
     
     def is_valid_move(self, board: str, index: int, piece: str) -> bool:
+        '''
+        Returns whether the move is valid
+        Parameters:
+        board (str): The go board
+        index (int): The 1D index of the position the piece must be placed
+        piece (str): The piece to be placed
+        Returns:
+        True if the move is valid, False if it is invalid
+        '''
         if board[index] != '-':
             return False # Cannot place a piece on a non empty cell
         
@@ -186,6 +203,14 @@ class MoveManager:
         return True
 
     def get_next_moves(self, board: str, piece: str) -> list[int]:
+        '''
+        Returns the list of valid positions a piece can be placed
+        Parameters:
+        board (str): The go board
+        piece (str): The piece to be placed
+        Returns:
+        The list of valid positions a piece can be placed
+        '''
         # There should be an O(N * N) approach to do this, but for now, I will just do this the naive way
         N = self.BOARD_SIZE
         valid_moves = []

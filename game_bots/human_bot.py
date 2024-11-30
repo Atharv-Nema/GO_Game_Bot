@@ -6,7 +6,7 @@ import sys
 import time
 
 class HumanBot(Bot):
-    '''This is a bot that implements a simple minimax strategy'''
+    '''This is a bot that represents the human input'''
     def __init__(self, move_manager, my_piece):
         self.move_manager: MoveManager = move_manager
         self.my_piece = my_piece

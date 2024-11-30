@@ -1,6 +1,6 @@
 from game_implementation.rules_implementation import MoveManager
 from game_bots.bot import Bot
-class MinimaxBot(Bot):
+class DebugBot(Bot):
     '''This is a bot that implements a simple minimax strategy'''
     def __init__(self, move_manager, my_piece):
         self.previous_states = set()

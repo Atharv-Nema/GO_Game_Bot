@@ -2,6 +2,7 @@ import pygame
 from game_implementation.rules_implementation import MoveManager
 
 class VisualInterface:
+    '''A class that provides functionality for interacting with the GO board using a user interface'''
     cell_size = 60
 
     # Define colors
@@ -17,7 +18,11 @@ class VisualInterface:
 
 
     def __init__(self, move_manager: MoveManager):
-        '''Initializes the visual interface'''
+        '''
+        Initializes the visual interface
+        Parameters:
+        move_manager (MoveManager): The object that manages the rules of the game
+        '''
         self.move_manager = move_manager
 
         # Initialize pygame
@@ -35,6 +40,11 @@ class VisualInterface:
         self.result_font = pygame.font.Font(None, 72)
 
     def display_result(self, result: str):
+        '''
+        This function displays the result of the game
+        Parameters:
+        result (str): The result of the game to be displayed
+        '''
         # Fill screen with background color
         self.screen.fill(self.BACKGROUND_COLOR)
 
@@ -57,6 +67,8 @@ class VisualInterface:
     def draw_territory(self, board: str):
         """
         Takes in the board and draws the territories
+        Parameters:
+        board (str): The go board
         """
         territory_surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA)  # Create a transparent surface
         for i in range(self.board_size * self.board_size):
@@ -76,7 +88,7 @@ class VisualInterface:
         """
         Takes in the board and draws it
         Parameters:
-        board (Board): The board
+        board (str): The go board
         """
         self.screen.fill(self.BACKGROUND_COLOR)
 
